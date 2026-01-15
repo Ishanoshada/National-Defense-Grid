@@ -1,0 +1,8 @@
+
+{
+  "name": "Sri Lanka Strategic Defense Simulator",
+  "description": "An advanced strategic defense simulator for Sri Lanka, featuring real-time geospatial optimization, coverage heatmaps, and spatial placement strategies using real map data.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
