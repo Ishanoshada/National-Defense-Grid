@@ -172,7 +172,6 @@ const App: React.FC = () => {
     'JY-27': 1, 
     'YLC-18': 2 
   });
-<<<<<<< HEAD
 
   useEffect(() => {
     const removeLeafletBottomRight = () => {
@@ -194,26 +193,6 @@ const App: React.FC = () => {
 
     return () => observer.disconnect();
   }, []);
-=======
-  useEffect(() => {
-  const removeLeafletBottomRight = () => {
-    const el = document.querySelector(
-      ".leaflet-bottom.leaflet-right"
-    ) as HTMLElement | null;
-    if (el) el.remove();
-  };
-  removeLeafletBottomRight();
-  const observer = new MutationObserver(() => {
-    removeLeafletBottomRight();
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-  return () => observer.disconnect();
-}, []);
->>>>>>> 7ef55a764a62ab61a6c9f4409c3fd369db3a0e1c
 
   const [activeRoleTab, setActiveRoleTab] = useState<SystemRole>('INTERCEPTOR');
   const [customArsenal, setCustomArsenal] = useState<SystemTemplate[]>([]);
