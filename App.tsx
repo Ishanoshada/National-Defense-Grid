@@ -146,13 +146,28 @@ const MapEvents = ({ onMapClick, activeMode, onDropSystem }: { onMapClick: (e: L
 
 const MapController = ({ geoData }: { geoData: any }) => {
   const map = useMap();
+  const hasFittedRef = useRef(false);
+
   useEffect(() => {
-    if (geoData) {
+    if (geoData && !hasFittedRef.current) {
       const layer = L.geoJSON(geoData);
-      // Wait for map container to settle before fitting bounds to avoid grey areas
-      setTimeout(() => {
-        map.fitBounds(layer.getBounds(), { padding: [40, 40] });
-      }, 500);
+      const bounds = layer.getBounds();
+      
+      const forceRefresh = () => {
+        map.invalidateSize();
+        // Use very large padding to ensure the whole island is visible and centered
+        // maxZoom: 7 prevents it from zooming in too much automatically
+        map.fitBounds(bounds, { 
+          padding: [120, 120], 
+          animate: false,
+          maxZoom: 7 
+        });
+        hasFittedRef.current = true;
+      };
+      
+      // Delay slightly more to ensure CSS transitions and layout are finished
+      const timer = setTimeout(forceRefresh, 800);
+      return () => clearTimeout(timer);
     }
   }, [geoData, map]);
   return null;
@@ -1053,10 +1068,11 @@ const App: React.FC = () => {
         <div className="flex-1 relative overflow-hidden">
           <MapContainer 
             center={[7.8731, 80.7718]} 
-            zoom={7} 
+            zoom={6} 
             className="w-full h-full" 
             zoomControl={false}
             preferCanvas={true} 
+            minZoom={5}
           >
             <TileLayer url={mapTheme === 'dark' ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" : mapTheme === 'warm' ? "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"} />
             <MapController geoData={geoData} />
@@ -1327,7 +1343,9 @@ const App: React.FC = () => {
       </main>
 
       <style>{`
-        .leaflet-container { background: ${mapTheme === 'dark' ? '#020617' : mapTheme === 'warm' ? '#eee8d5' : '#f1f5f9'} !important; } 
+        .leaflet-container { 
+          background: ${mapTheme === 'dark' ? '#020617' : mapTheme === 'warm' ? '#eee8d5' : '#f1f5f9'} !important; 
+        } 
         .tech-popup .leaflet-popup-content-wrapper { background: transparent; padding: 0; box-shadow: none; border-radius: 12px; } 
         .tech-popup .leaflet-popup-tip { background: ${mapTheme === 'dark' ? '#020617' : mapTheme === 'warm' ? '#fdf6e3' : '#ffffff'}; } 
         .custom-scrollbar::-webkit-scrollbar { width: 4px; } 
