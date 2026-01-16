@@ -169,6 +169,25 @@ const App: React.FC = () => {
     'JY-27': 1, 
     'YLC-18': 2 
   });
+  useEffect(() => {
+  const removeLeafletBottomRight = () => {
+    const el = document.querySelector(
+      ".leaflet-bottom.leaflet-right"
+    ) as HTMLElement | null;
+    if (el) el.remove();
+  };
+  removeLeafletBottomRight();
+  const observer = new MutationObserver(() => {
+    removeLeafletBottomRight();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+  return () => observer.disconnect();
+}, []);
+
   const [activeRoleTab, setActiveRoleTab] = useState<SystemRole>('INTERCEPTOR');
   const [customArsenal, setCustomArsenal] = useState<SystemTemplate[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
